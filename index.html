@@ -7,36 +7,58 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="player-info">
-        <div class="player">Player <input type="text" id="playerX-name" placeholder="X" value="X">: <span id="playerX-score">0</span></div>
-        <div class="player">Player <input type="text" id="playerO-name" placeholder="O" value="O">: <span id="playerO-score">0</span></div>
-    </div>
-    <div id="status">Player X's turn</div>
-    <div id="game">
-        <div class="cell" data-cell></div>
-        <div class="cell" data-cell></div>
-        <div class="cell" data-cell></div>
-        <div class="cell" data-cell></div>
-        <div class="cell" data-cell></div>
-        <div class="cell" data-cell></div>
-        <div class="cell" data-cell></div>
-        <div class="cell" data-cell></div>
-        <div class="cell" data-cell></div>
-    </div>
-    <div id="buttons">
-        <button id="restart">Restart Game</button>
-        <button id="reset-score">Reset Score</button>
-        <button id="undo">Undo</button>
-    </div>
+    <div class="container">
+        <header>
+            <h1>Tic Tac Toe</h1>
+            <div class="player-settings">
+                <label for="playerX-name">Player X Name:</label>
+                <input type="text" id="playerX-name" value="X">
+                <label for="playerX-color">Player X Color:</label>
+                <input type="color" id="playerX-color" value="#FF5733">
 
-    <div id="game-over-modal" class="modal">
-        <div class="modal-content">
-            <span id="close-modal" class="close">&times;</span>
-            <p id="game-over-message"></p>
-            <button id="modal-restart">Play Again</button>
+                <label for="playerO-name">Player O Name:</label>
+                <input type="text" id="playerO-name" value="O">
+                <label for="playerO-color">Player O Color:</label>
+                <input type="color" id="playerO-color" value="#33C1FF">
+            </div>
+            <div class="status" id="status">Player X's turn</div>
+            <div class="scoreboard">
+                <div>Player X: <span id="playerX-score">0</span></div>
+                <div>Player O: <span id="playerO-score">0</span></div>
+            </div>
+            <button id="restart">Restart Game</button>
+            <button id="reset-score">Reset Score</button>
+            <button id="undo">Undo Move</button>
+            <button id="show-history">Show History</button>
+        </header>
+        <main>
+            <div class="board">
+                <div class="cell" data-cell></div>
+                <div class="cell" data-cell></div>
+                <div class="cell" data-cell></div>
+                <div class="cell" data-cell></div>
+                <div class="cell" data-cell></div>
+                <div class="cell" data-cell></div>
+                <div class="cell" data-cell></div>
+                <div class="cell" data-cell></div>
+                <div class="cell" data-cell></div>
+            </div>
+        </main>
+        <div class="modal" id="game-over-modal">
+            <div class="modal-content">
+                <span id="close-modal">&times;</span>
+                <p id="game-over-message"></p>
+                <button id="modal-restart">Restart Game</button>
+            </div>
+        </div>
+        <div class="history-modal" id="history-modal">
+            <div class="history-content">
+                <span id="close-history">&times;</span>
+                <h2>Game History</h2>
+                <ul id="history-list"></ul>
+            </div>
         </div>
     </div>
-    
     <script src="script.js"></script>
 </body>
 </html>
