@@ -1,18 +1,38 @@
 const cells = document.querySelectorAll('[data-cell]');
 const statusText = document.getElementById('status');
+const restartButton = document.getElementById('restart');
+const resetScoreButton = document.getElementById('reset-score');
+const playerXScoreText = document.getElementById('playerX-score');
+const playerOScoreText = document.getElementById('playerO-score');
 let currentPlayer = 'X';
+let isGameActive = true;
+let playerXScore = 0;
+let playerOScore = 0;
+
+const PLAYER_X_WON = 'PLAYER_X_WON';
+const PLAYER_O_WON = 'PLAYER_O_WON';
+const TIE = 'TIE';
 
 cells.forEach(cell => {
     cell.addEventListener('click', handleClick, { once: true });
 });
 
+restartButton.addEventListener('click', restartGame);
+resetScoreButton.addEventListener('click', resetScore);
+
 function handleClick(e) {
     const cell = e.target;
+    if (!isGameActive) return;
+
     cell.textContent = currentPlayer;
     if (checkWin(currentPlayer)) {
         statusText.textContent = `${currentPlayer} wins!`;
+        highlightWinningCells();
+        updateScore(currentPlayer);
+        isGameActive = false;
     } else if (isDraw()) {
         statusText.textContent = 'Draw!';
+        isGameActive = false;
     } else {
         currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
         statusText.textContent = `Player ${currentPlayer}'s turn`;
@@ -32,9 +52,11 @@ function checkWin(player) {
     ];
 
     return winPatterns.some(pattern => {
-        return pattern.every(index => {
-            return cells[index].textContent === player;
-        });
+        if (pattern.every(index => cells[index].textContent === player)) {
+            winningCombination = pattern;
+            return true;
+        }
+        return false;
     });
 }
 
@@ -42,4 +64,39 @@ function isDraw() {
     return [...cells].every(cell => {
         return cell.textContent === 'X' || cell.textContent === 'O';
     });
+}
+
+function restartGame() {
+    cells.forEach(cell => {
+        cell.textContent = '';
+        cell.classList.remove('win');
+        cell.addEventListener('click', handleClick, { once: true });
+    });
+    currentPlayer = 'X';
+    statusText.textContent = `Player ${currentPlayer}'s turn`;
+    isGameActive = true;
+}
+
+function resetScore() {
+    playerXScore = 0;
+    playerOScore = 0;
+    playerXScoreText.textContent = playerXScore;
+    playerOScoreText.textContent = playerOScore;
+    restartGame();
+}
+
+function highlightWinningCells() {
+    winningCombination.forEach(index => {
+        cells[index].classList.add('win');
+    });
+}
+
+function updateScore(player) {
+    if (player === 'X') {
+        playerXScore++;
+        playerXScoreText.textContent = playerXScore;
+    } else if (player === 'O') {
+        playerOScore++;
+        playerOScoreText.textContent = playerOScore;
+    }
 }
