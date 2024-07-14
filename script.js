@@ -1,54 +1,54 @@
-const cells = document.querySelectorAll('[data-cell]');
-const statusText = document.getElementById('status');
-const restartButton = document.getElementById('restart');
-const resetScoreButton = document.getElementById('reset-score');
-const undoButton = document.getElementById('undo');
-const showHistoryButton = document.getElementById('show-history');
-const playerXScoreText = document.getElementById('playerX-score');
-const playerOScoreText = document.getElementById('playerO-score');
-const playerXNameInput = document.getElementById('playerX-name');
-const playerONameInput = document.getElementById('playerO-name');
-const playerXColorInput = document.getElementById('playerX-color');
-const playerOColorInput = document.getElementById('playerO-color');
-const gameOverModal = document.getElementById('game-over-modal');
-const gameOverMessage = document.getElementById('game-over-message');
-const closeModal = document.getElementById('close-modal');
-const modalRestartButton = document.getElementById('modal-restart');
-const historyModal = document.getElementById('history-modal');
-const historyList = document.getElementById('history-list');
-const closeHistory = document.getElementById('close-history');
+// Select DOM elements
+const cells = document.querySelectorAll('.cell');
+const statusText = document.getElementById('statusText');
+const gameOverModal = document.getElementById('gameOverModal');
+const gameOverMessage = document.getElementById('gameOverMessage');
+const historyModal = document.getElementById('historyModal');
+const historyList = document.getElementById('historyList');
+const playerXNameInput = document.getElementById('playerXName');
+const playerONameInput = document.getElementById('playerOName');
+const playerXColorInput = document.getElementById('playerXColor');
+const playerOColorInput = document.getElementById('playerOColor');
+const startGameButton = document.getElementById('startGame');
+const resetScoreButton = document.getElementById('resetScore');
+const showHistoryButton = document.getElementById('showHistory');
+const closeModalButton = document.getElementById('closeModal');
+const closeHistoryModalButton = document.getElementById('closeHistoryModal');
 
 let currentPlayer = 'X';
 let isGameActive = true;
 let playerXScore = 0;
 let playerOScore = 0;
-let winningCombination = [];
 let history = [];
+let winningCombination = [];
 
-// Event listeners
-cells.forEach(cell => {
-    cell.addEventListener('click', handleClick, { once: true });
-});
-restartButton.addEventListener('click', restartGame);
-resetScoreButton.addEventListener('click', resetScore);
-undoButton.addEventListener('click', undoMove);
-showHistoryButton.addEventListener('click', showHistory);
-closeModal.addEventListener('click', () => gameOverModal.style.display = 'none');
-modalRestartButton.addEventListener('click', () => {
-    gameOverModal.style.display = 'none';
-    restartGame();
-});
-closeHistory.addEventListener('click', () => historyModal.style.display = 'none');
+// Initialize the game
+function initializeGame() {
+    cells.forEach(cell => {
+        cell.textContent = '';
+        cell.style.backgroundColor = '#fff';
+        cell.style.color = '#000';
+        cell.addEventListener('click', handleClick, { once: true });
+    });
+    statusText.textContent = `Player ${getCurrentPlayerName()}'s turn`;
+    isGameActive = true;
+    winningCombination = [];
+    history = [];
+}
 
-// Handle click on a cell
-function handleClick(e) {
-    const cell = e.target;
-    if (!isGameActive) return;
+// Get the current player's name from input field
+function getCurrentPlayerName() {
+    return currentPlayer === 'X' ? playerXNameInput.value : playerONameInput.value;
+}
 
-    const color = currentPlayer === 'X' ? playerXColorInput.value : playerOColorInput.value;
+// Handle cell clicks
+function handleClick(event) {
+    const cell = event.target;
+
+    if (!isGameActive || cell.textContent) return;
+
     cell.textContent = currentPlayer;
-    cell.style.color = color;
-    cell.removeEventListener('click', handleClick); // Prevent further clicks
+    cell.style.color = currentPlayer === 'X' ? playerXColorInput.value : playerOColorInput.value;
     history.push({ cell: cell.textContent, player: currentPlayer });
 
     if (checkWin(currentPlayer)) {
@@ -63,11 +63,6 @@ function handleClick(e) {
         currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
         statusText.textContent = `Player ${getCurrentPlayerName()}'s turn`;
     }
-}
-
-// Get the current player's name from input field
-function getCurrentPlayerName() {
-    return currentPlayer === 'X' ? playerXNameInput.value : playerONameInput.value;
 }
 
 // Check if the current player has won
@@ -99,52 +94,6 @@ function isDraw() {
     });
 }
 
-// Restart the game
-function restartGame() {
-    cells.forEach(cell => {
-        cell.textContent = '';
-        cell.style.backgroundColor = '#333';
-        cell.style.color = '#fff';
-        cell.addEventListener('click', handleClick, { once: true });
-    });
-    statusText.textContent = `Player ${getCurrentPlayerName()}'s turn`;
-    isGameActive = true;
-    winningCombination = [];
-    history = [];
-}
-
-// Reset the score
-function resetScore() {
-    playerXScore = 0;
-    playerOScore = 0;
-    playerXScoreText.textContent = playerXScore;
-    playerOScoreText.textContent = playerOScore;
-}
-
-// Undo the last move
-function undoMove() {
-    if (history.length === 0) return;
-
-    const lastMove = history.pop();
-    cells.forEach(cell => {
-        if (cell.textContent === lastMove.cell && cell.style.color === (lastMove.player === 'X' ? playerXColorInput.value : playerOColorInput.value)) {
-            cell.textContent = '';
-            cell.style.color = '#fff';
-            cell.addEventListener('click', handleClick, { once: true });
-        }
-    });
-
-    currentPlayer = lastMove.player;
-    statusText.textContent = `Player ${getCurrentPlayerName()}'s turn`;
-    isGameActive = true;
-}
-
-// Show the game over modal
-function showGameOverModal(message) {
-    gameOverMessage.textContent = message;
-    gameOverModal.style.display = 'flex';
-}
-
 // Highlight the winning cells
 function highlightWinningCells() {
     winningCombination.forEach(index => {
@@ -152,24 +101,54 @@ function highlightWinningCells() {
     });
 }
 
+// Show game over modal
+function showGameOverModal(message) {
+    gameOverMessage.textContent = message;
+    gameOverModal.style.display = 'flex';
+}
+
 // Update the score
 function updateScore(winner) {
     if (winner === 'X') {
         playerXScore++;
-        playerXScoreText.textContent = playerXScore;
-    } else if (winner === 'O') {
+    } else {
         playerOScore++;
-        playerOScoreText.textContent = playerOScore;
     }
+}
+
+// Reset the game and scores
+function resetGame() {
+    initializeGame();
+    startGameButton.disabled = false;
+    playerXScore = 0;
+    playerOScore = 0;
+    updateScoreDisplay();
+}
+
+// Update the score display
+function updateScoreDisplay() {
+    document.getElementById('playerXScore').textContent = `Player X: ${playerXScore}`;
+    document.getElementById('playerOScore').textContent = `Player O: ${playerOScore}`;
 }
 
 // Show game history
 function showHistory() {
-    historyList.innerHTML = '';
-    history.forEach((move, index) => {
-        const listItem = document.createElement('li');
-        listItem.textContent = `Move ${index + 1}: Player ${move.player} placed "${move.cell}"`;
-        historyList.appendChild(listItem);
-    });
+    historyList.innerHTML = history.map(entry => `<li>${entry.player} - ${entry.cell}</li>`).join('');
     historyModal.style.display = 'flex';
 }
+
+// Close modals
+function closeModals() {
+    gameOverModal.style.display = 'none';
+    historyModal.style.display = 'none';
+}
+
+// Event listeners
+startGameButton.addEventListener('click', initializeGame);
+resetScoreButton.addEventListener('click', resetGame);
+showHistoryButton.addEventListener('click', showHistory);
+closeModalButton.addEventListener('click', closeModals);
+closeHistoryModalButton.addEventListener('click', closeModals);
+
+// Initialize game on load
+initializeGame();
