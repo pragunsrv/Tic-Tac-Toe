@@ -97,11 +97,17 @@ button:disabled {
     margin-top: 20px;
 }
 
-.settings input {
+.settings input,
+.settings select {
     margin: 5px 0;
     padding: 5px;
     border-radius: 4px;
     border: 1px solid #888;
+}
+
+.settings label {
+    display: block;
+    margin-top: 10px;
 }
 
 .modal {
@@ -148,4 +154,59 @@ button:disabled {
 
 #playAgain:hover {
     background: #0056b3;
+}
+
+/* Dark Theme */
+body[data-theme="dark"] {
+    background-color: #333;
+}
+
+body[data-theme="dark"] .container {
+    background: #444;
+}
+
+body[data-theme="dark"] .cell {
+    background: #666;
+    color: #fff;
+}
+
+body[data-theme="dark"] .cell.win {
+    background: #2e8b57;
+}
+
+/* Light Theme */
+body[data-theme="light"] {
+    background-color: #eee;
+    color: #333;
+}
+
+body[data-theme="light"] .container {
+    background: #fff;
+}
+
+body[data-theme="light"] .cell {
+    background: #ddd;
+    color: #333;
+}
+
+body[data-theme="light"] .cell.win {
+    background: #4caf50;
+}
+
+/* Default Theme */
+body[data-theme="default"] {
+    background-color: #333;
+}
+
+body[data-theme="default"] .container {
+    background: #444;
+}
+
+body[data-theme="default"] .cell {
+    background: #666;
+    color: #000;
+}
+
+body[data-theme="default"] .cell.win {
+    background: #2e8b57;
 }

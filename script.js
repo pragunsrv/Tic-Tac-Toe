@@ -9,6 +9,7 @@ const playerXNameInput = document.getElementById('playerXName');
 const playerONameInput = document.getElementById('playerOName');
 const playerXColorInput = document.getElementById('playerXColor');
 const playerOColorInput = document.getElementById('playerOColor');
+const themeSelect = document.getElementById('themeSelect');
 const startGameButton = document.getElementById('startGame');
 const resetScoreButton = document.getElementById('resetScore');
 const showHistoryButton = document.getElementById('showHistory');
@@ -17,55 +18,55 @@ const closeHistoryModalButton = document.getElementById('closeHistoryModal');
 const playAgainButton = document.getElementById('playAgain');
 
 let currentPlayer = 'X';
-let isGameActive = true;
 let playerXScore = 0;
 let playerOScore = 0;
-let history = [];
 let winningCombination = [];
+let history = [];
 
 // Initialize the game
 function initializeGame() {
     cells.forEach(cell => {
         cell.textContent = '';
-        cell.style.backgroundColor = '#666';
-        cell.style.color = '#000';
         cell.classList.remove('win');
-        cell.addEventListener('click', handleClick, { once: true });
+        cell.addEventListener('click', handleClick);
     });
     statusText.textContent = `Player ${getCurrentPlayerName()}'s turn`;
-    isGameActive = true;
-    winningCombination = [];
-    history = [];
-    updateScoreDisplay();
 }
 
-// Get the current player's name from input field
+// Handle cell click
+function handleClick(event) {
+    const cell = event.target;
+    if (cell.textContent || checkWin('X') || checkWin('O')) return;
+
+    cell.textContent = currentPlayer;
+    cell.style.color = getCurrentPlayerColor();
+
+    if (checkWin(currentPlayer)) {
+        updateScore(currentPlayer);
+        highlightWinningCells();
+        showGameOverModal(`${getCurrentPlayerName()} Wins!`);
+        history.push({ player: getCurrentPlayerName(), cell: `Cell ${cell.dataset.index}` });
+    } else if (isDraw()) {
+        showGameOverModal('It\'s a Draw!');
+    } else {
+        switchPlayer();
+    }
+}
+
+// Get current player name
 function getCurrentPlayerName() {
     return currentPlayer === 'X' ? playerXNameInput.value : playerONameInput.value;
 }
 
-// Handle cell clicks
-function handleClick(event) {
-    const cell = event.target;
+// Get current player color
+function getCurrentPlayerColor() {
+    return currentPlayer === 'X' ? playerXColorInput.value : playerOColorInput.value;
+}
 
-    if (!isGameActive || cell.textContent) return;
-
-    cell.textContent = currentPlayer;
-    cell.style.color = currentPlayer === 'X' ? playerXColorInput.value : playerOColorInput.value;
-    history.push({ cell: cell.textContent, player: currentPlayer });
-
-    if (checkWin(currentPlayer)) {
-        showGameOverModal(`${getCurrentPlayerName()} wins!`);
-        highlightWinningCells();
-        updateScore(currentPlayer);
-        isGameActive = false;
-    } else if (isDraw()) {
-        showGameOverModal('Draw!');
-        isGameActive = false;
-    } else {
-        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-        statusText.textContent = `Player ${getCurrentPlayerName()}'s turn`;
-    }
+// Switch player
+function switchPlayer() {
+    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+    statusText.textContent = `Player ${getCurrentPlayerName()}'s turn`;
 }
 
 // Check for a win
@@ -173,6 +174,11 @@ closeHistoryModalButton.addEventListener('click', closeModals);
 playAgainButton.addEventListener('click', () => {
     initializeGame();
     gameOverModal.style.display = 'none';
+});
+
+// Theme Change
+themeSelect.addEventListener('change', () => {
+    document.body.dataset.theme = themeSelect.value;
 });
 
 // Initialize game on load
