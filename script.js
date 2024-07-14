@@ -2,6 +2,7 @@ const cells = document.querySelectorAll('[data-cell]');
 const statusText = document.getElementById('status');
 const restartButton = document.getElementById('restart');
 const resetScoreButton = document.getElementById('reset-score');
+const undoButton = document.getElementById('undo');
 const playerXScoreText = document.getElementById('playerX-score');
 const playerOScoreText = document.getElementById('playerO-score');
 const playerXNameInput = document.getElementById('playerX-name');
@@ -15,6 +16,7 @@ let isGameActive = true;
 let playerXScore = 0;
 let playerOScore = 0;
 let winningCombination = [];
+let history = [];
 
 const PLAYER_X_WON = 'PLAYER_X_WON';
 const PLAYER_O_WON = 'PLAYER_O_WON';
@@ -26,6 +28,7 @@ cells.forEach(cell => {
 
 restartButton.addEventListener('click', restartGame);
 resetScoreButton.addEventListener('click', resetScore);
+undoButton.addEventListener('click', undoMove);
 closeModal.addEventListener('click', () => gameOverModal.style.display = 'none');
 modalRestartButton.addEventListener('click', () => {
     gameOverModal.style.display = 'none';
@@ -37,6 +40,8 @@ function handleClick(e) {
     if (!isGameActive) return;
 
     cell.textContent = currentPlayer;
+    history.push({ cell, player: currentPlayer });
+
     if (checkWin(currentPlayer)) {
         showGameOverModal(`${getCurrentPlayerName()} wins!`);
         highlightWinningCells();
@@ -91,6 +96,7 @@ function restartGame() {
     currentPlayer = 'X';
     statusText.textContent = `Player ${getCurrentPlayerName()}'s turn`;
     isGameActive = true;
+    history = [];
 }
 
 function resetScore() {
@@ -99,6 +105,16 @@ function resetScore() {
     playerXScoreText.textContent = playerXScore;
     playerOScoreText.textContent = playerOScore;
     restartGame();
+}
+
+function undoMove() {
+    if (history.length > 0 && isGameActive) {
+        const lastMove = history.pop();
+        lastMove.cell.textContent = '';
+        lastMove.cell.addEventListener('click', handleClick, { once: true });
+        currentPlayer = lastMove.player;
+        statusText.textContent = `Player ${getCurrentPlayerName()}'s turn`;
+    }
 }
 
 function highlightWinningCells() {
@@ -111,7 +127,7 @@ function updateScore(player) {
     if (player === 'X') {
         playerXScore++;
         playerXScoreText.textContent = playerXScore;
-    } else if (player === 'O') {
+    } else {
         playerOScore++;
         playerOScoreText.textContent = playerOScore;
     }
