@@ -1,4 +1,5 @@
 const cells = document.querySelectorAll('[data-cell]');
+const statusText = document.getElementById('status');
 let currentPlayer = 'X';
 
 cells.forEach(cell => {
@@ -9,11 +10,12 @@ function handleClick(e) {
     const cell = e.target;
     cell.textContent = currentPlayer;
     if (checkWin(currentPlayer)) {
-        alert(`${currentPlayer} wins!`);
+        statusText.textContent = `${currentPlayer} wins!`;
     } else if (isDraw()) {
-        alert('Draw!');
+        statusText.textContent = 'Draw!';
     } else {
         currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        statusText.textContent = `Player ${currentPlayer}'s turn`;
     }
 }
 
