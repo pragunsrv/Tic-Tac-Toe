@@ -5,16 +5,20 @@ const gameOverModal = document.getElementById('gameOverModal');
 const gameOverMessage = document.getElementById('gameOverMessage');
 const historyModal = document.getElementById('historyModal');
 const historyList = document.getElementById('historyList');
+const settingsModal = document.getElementById('settingsModal');
 const playerXNameInput = document.getElementById('playerXName');
 const playerONameInput = document.getElementById('playerOName');
 const playerXColorInput = document.getElementById('playerXColor');
 const playerOColorInput = document.getElementById('playerOColor');
 const themeSelect = document.getElementById('themeSelect');
+const soundEffectsCheckbox = document.getElementById('soundEffects');
 const startGameButton = document.getElementById('startGame');
 const resetScoreButton = document.getElementById('resetScore');
 const showHistoryButton = document.getElementById('showHistory');
+const settingsToggleButton = document.getElementById('settingsToggle');
 const closeModalButton = document.getElementById('closeModal');
 const closeHistoryModalButton = document.getElementById('closeHistoryModal');
+const closeSettingsModalButton = document.getElementById('closeSettingsModal');
 const playAgainButton = document.getElementById('playAgain');
 
 let currentPlayer = 'X';
@@ -22,6 +26,7 @@ let playerXScore = 0;
 let playerOScore = 0;
 let winningCombination = [];
 let history = [];
+let audio = new Audio('win-sound.mp3');
 
 // Initialize the game
 function initializeGame() {
@@ -45,11 +50,19 @@ function handleClick(event) {
         updateScore(currentPlayer);
         highlightWinningCells();
         showGameOverModal(`${getCurrentPlayerName()} Wins!`);
+        playSound();
         history.push({ player: getCurrentPlayerName(), cell: `Cell ${cell.dataset.index}` });
     } else if (isDraw()) {
         showGameOverModal('It\'s a Draw!');
     } else {
         switchPlayer();
+    }
+}
+
+// Play sound effect
+function playSound() {
+    if (soundEffectsCheckbox.checked) {
+        audio.play();
     }
 }
 
@@ -159,18 +172,26 @@ function showHistory() {
     historyModal.style.display = 'flex';
 }
 
+// Show settings modal
+function showSettings() {
+    settingsModal.style.display = 'flex';
+}
+
 // Close modals
 function closeModals() {
     gameOverModal.style.display = 'none';
     historyModal.style.display = 'none';
+    settingsModal.style.display = 'none';
 }
 
 // Event listeners
 startGameButton.addEventListener('click', initializeGame);
 resetScoreButton.addEventListener('click', resetGame);
 showHistoryButton.addEventListener('click', showHistory);
+settingsToggleButton.addEventListener('click', showSettings);
 closeModalButton.addEventListener('click', closeModals);
 closeHistoryModalButton.addEventListener('click', closeModals);
+closeSettingsModalButton.addEventListener('click', closeModals);
 playAgainButton.addEventListener('click', () => {
     initializeGame();
     gameOverModal.style.display = 'none';

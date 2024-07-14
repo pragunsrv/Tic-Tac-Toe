@@ -31,6 +31,7 @@
             <button id="startGame">Start New Game</button>
             <button id="resetScore">Reset Scores</button>
             <button id="showHistory">Show History</button>
+            <button id="settingsToggle">Settings</button>
         </div>
     </div>
 
@@ -52,23 +53,28 @@
         </div>
     </div>
 
-    <!-- Game Settings -->
-    <div class="settings">
-        <h2>Settings</h2>
-        <label for="playerXName">Player X Name:</label>
-        <input type="text" id="playerXName" value="X">
-        <label for="playerXColor">Player X Color:</label>
-        <input type="color" id="playerXColor" value="#000000">
-        <label for="playerOName">Player O Name:</label>
-        <input type="text" id="playerOName" value="O">
-        <label for="playerOColor">Player O Color:</label>
-        <input type="color" id="playerOColor" value="#000000">
-        <label for="themeSelect">Theme:</label>
-        <select id="themeSelect">
-            <option value="default">Default</option>
-            <option value="dark">Dark</option>
-            <option value="light">Light</option>
-        </select>
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span id="closeSettingsModal" class="close">&times;</span>
+            <h2>Settings</h2>
+            <label for="playerXName">Player X Name:</label>
+            <input type="text" id="playerXName" value="X">
+            <label for="playerXColor">Player X Color:</label>
+            <input type="color" id="playerXColor" value="#000000">
+            <label for="playerOName">Player O Name:</label>
+            <input type="text" id="playerOName" value="O">
+            <label for="playerOColor">Player O Color:</label>
+            <input type="color" id="playerOColor" value="#000000">
+            <label for="themeSelect">Theme:</label>
+            <select id="themeSelect">
+                <option value="default">Default</option>
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+            </select>
+            <label for="soundEffects">Sound Effects:</label>
+            <input type="checkbox" id="soundEffects">
+        </div>
     </div>
 
     <script src="script.js"></script>
