@@ -4,10 +4,17 @@ const restartButton = document.getElementById('restart');
 const resetScoreButton = document.getElementById('reset-score');
 const playerXScoreText = document.getElementById('playerX-score');
 const playerOScoreText = document.getElementById('playerO-score');
+const playerXNameInput = document.getElementById('playerX-name');
+const playerONameInput = document.getElementById('playerO-name');
+const gameOverModal = document.getElementById('game-over-modal');
+const gameOverMessage = document.getElementById('game-over-message');
+const closeModal = document.getElementById('close-modal');
+const modalRestartButton = document.getElementById('modal-restart');
 let currentPlayer = 'X';
 let isGameActive = true;
 let playerXScore = 0;
 let playerOScore = 0;
+let winningCombination = [];
 
 const PLAYER_X_WON = 'PLAYER_X_WON';
 const PLAYER_O_WON = 'PLAYER_O_WON';
@@ -19,6 +26,11 @@ cells.forEach(cell => {
 
 restartButton.addEventListener('click', restartGame);
 resetScoreButton.addEventListener('click', resetScore);
+closeModal.addEventListener('click', () => gameOverModal.style.display = 'none');
+modalRestartButton.addEventListener('click', () => {
+    gameOverModal.style.display = 'none';
+    restartGame();
+});
 
 function handleClick(e) {
     const cell = e.target;
@@ -26,17 +38,21 @@ function handleClick(e) {
 
     cell.textContent = currentPlayer;
     if (checkWin(currentPlayer)) {
-        statusText.textContent = `${currentPlayer} wins!`;
+        showGameOverModal(`${getCurrentPlayerName()} wins!`);
         highlightWinningCells();
         updateScore(currentPlayer);
         isGameActive = false;
     } else if (isDraw()) {
-        statusText.textContent = 'Draw!';
+        showGameOverModal('Draw!');
         isGameActive = false;
     } else {
         currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-        statusText.textContent = `Player ${currentPlayer}'s turn`;
+        statusText.textContent = `Player ${getCurrentPlayerName()}'s turn`;
     }
+}
+
+function getCurrentPlayerName() {
+    return currentPlayer === 'X' ? playerXNameInput.value : playerONameInput.value;
 }
 
 function checkWin(player) {
@@ -73,7 +89,7 @@ function restartGame() {
         cell.addEventListener('click', handleClick, { once: true });
     });
     currentPlayer = 'X';
-    statusText.textContent = `Player ${currentPlayer}'s turn`;
+    statusText.textContent = `Player ${getCurrentPlayerName()}'s turn`;
     isGameActive = true;
 }
 
@@ -99,4 +115,9 @@ function updateScore(player) {
         playerOScore++;
         playerOScoreText.textContent = playerOScore;
     }
+}
+
+function showGameOverModal(message) {
+    gameOverMessage.textContent = message;
+    gameOverModal.style.display = 'block';
 }

@@ -8,8 +8,8 @@
 </head>
 <body>
     <div id="player-info">
-        <div id="player1" class="player">Player X: <span id="playerX-score">0</span></div>
-        <div id="player2" class="player">Player O: <span id="playerO-score">0</span></div>
+        <div class="player">Player <input type="text" id="playerX-name" placeholder="X" value="X">: <span id="playerX-score">0</span></div>
+        <div class="player">Player <input type="text" id="playerO-name" placeholder="O" value="O">: <span id="playerO-score">0</span></div>
     </div>
     <div id="status">Player X's turn</div>
     <div id="game">
@@ -27,6 +27,15 @@
         <button id="restart">Restart Game</button>
         <button id="reset-score">Reset Score</button>
     </div>
+
+    <div id="game-over-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-modal" class="close">&times;</span>
+            <p id="game-over-message"></p>
+            <button id="modal-restart">Play Again</button>
+        </div>
+    </div>
+    
     <script src="script.js"></script>
 </body>
 </html>
