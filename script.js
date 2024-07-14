@@ -12,6 +12,7 @@ const playerXColorInput = document.getElementById('playerXColor');
 const playerOColorInput = document.getElementById('playerOColor');
 const themeSelect = document.getElementById('themeSelect');
 const soundEffectsCheckbox = document.getElementById('soundEffects');
+const highlightWinsCheckbox = document.getElementById('highlightWins');
 const startGameButton = document.getElementById('startGame');
 const resetScoreButton = document.getElementById('resetScore');
 const showHistoryButton = document.getElementById('showHistory');
@@ -20,6 +21,7 @@ const closeModalButton = document.getElementById('closeModal');
 const closeHistoryModalButton = document.getElementById('closeHistoryModal');
 const closeSettingsModalButton = document.getElementById('closeSettingsModal');
 const playAgainButton = document.getElementById('playAgain');
+const toggleThemeButton = document.getElementById('toggleTheme');
 
 let currentPlayer = 'X';
 let playerXScore = 0;
@@ -196,10 +198,8 @@ playAgainButton.addEventListener('click', () => {
     initializeGame();
     gameOverModal.style.display = 'none';
 });
-
-// Theme Change
-themeSelect.addEventListener('change', () => {
-    document.body.dataset.theme = themeSelect.value;
+toggleThemeButton.addEventListener('click', () => {
+    document.body.dataset.theme = document.body.dataset.theme === 'default' ? 'dark' : 'default';
 });
 
 // Initialize game on load
