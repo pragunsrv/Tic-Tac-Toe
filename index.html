@@ -9,53 +9,62 @@
 <body>
     <div class="container">
         <h1>Tic-Tac-Toe</h1>
-        <div class="settings">
-            <label for="playerXName">Player X Name:</label>
-            <input type="text" id="playerXName" value="Player X">
-            <label for="playerOName">Player O Name:</label>
-            <input type="text" id="playerOName" value="Player O">
-            <label for="playerXColor">Player X Color:</label>
-            <input type="color" id="playerXColor" value="#ff0000">
-            <label for="playerOColor">Player O Color:</label>
-            <input type="color" id="playerOColor" value="#0000ff">
-            <label for="difficulty">AI Difficulty:</label>
-            <select id="difficulty">
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
-            </select>
-            <button id="startGame">Start Game</button>
-            <button id="resetScore">Reset Score</button>
-            <button id="showHistory">Show History</button>
+        <div class="game-info">
+            <div id="statusText">Player X's turn</div>
+            <div class="scoreboard">
+                <div id="playerXScore">Player X: 0</div>
+                <div id="playerOScore">Player O: 0</div>
+            </div>
         </div>
         <div class="board">
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
-            <div class="cell"></div>
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
         </div>
-        <div class="status">
-            <span id="statusText">Player X's turn</span>
-        </div>
-        <div id="gameOverModal" class="modal">
-            <div class="modal-content">
-                <span id="gameOverMessage"></span>
-                <button id="closeModal">Close</button>
-            </div>
-        </div>
-        <div id="historyModal" class="modal">
-            <div class="modal-content">
-                <ul id="historyList"></ul>
-                <button id="closeHistoryModal">Close</button>
-            </div>
+        <div class="controls">
+            <button id="startGame">Start New Game</button>
+            <button id="resetScore">Reset Scores</button>
+            <button id="showHistory">Show History</button>
         </div>
     </div>
+
+    <!-- Game Over Modal -->
+    <div id="gameOverModal" class="modal">
+        <div class="modal-content">
+            <span id="closeModal" class="close">&times;</span>
+            <p id="gameOverMessage"></p>
+            <button id="playAgain">Play Again</button>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div id="historyModal" class="modal">
+        <div class="modal-content">
+            <span id="closeHistoryModal" class="close">&times;</span>
+            <h2>Game History</h2>
+            <ul id="historyList"></ul>
+        </div>
+    </div>
+
+    <!-- Game Settings -->
+    <div class="settings">
+        <h2>Settings</h2>
+        <label for="playerXName">Player X Name:</label>
+        <input type="text" id="playerXName" value="X">
+        <label for="playerXColor">Player X Color:</label>
+        <input type="color" id="playerXColor" value="#000000">
+        <label for="playerOName">Player O Name:</label>
+        <input type="text" id="playerOName" value="O">
+        <label for="playerOColor">Player O Color:</label>
+        <input type="color" id="playerOColor" value="#000000">
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
-    

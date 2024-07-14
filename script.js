@@ -14,6 +14,7 @@ const resetScoreButton = document.getElementById('resetScore');
 const showHistoryButton = document.getElementById('showHistory');
 const closeModalButton = document.getElementById('closeModal');
 const closeHistoryModalButton = document.getElementById('closeHistoryModal');
+const playAgainButton = document.getElementById('playAgain');
 
 let currentPlayer = 'X';
 let isGameActive = true;
@@ -26,14 +27,16 @@ let winningCombination = [];
 function initializeGame() {
     cells.forEach(cell => {
         cell.textContent = '';
-        cell.style.backgroundColor = '#fff';
+        cell.style.backgroundColor = '#666';
         cell.style.color = '#000';
+        cell.classList.remove('win');
         cell.addEventListener('click', handleClick, { once: true });
     });
     statusText.textContent = `Player ${getCurrentPlayerName()}'s turn`;
     isGameActive = true;
     winningCombination = [];
     history = [];
+    updateScoreDisplay();
 }
 
 // Get the current player's name from input field
@@ -65,7 +68,7 @@ function handleClick(event) {
     }
 }
 
-// Check if the current player has won
+// Check for a win
 function checkWin(player) {
     const winPatterns = [
         [0, 1, 2],
@@ -75,29 +78,47 @@ function checkWin(player) {
         [1, 4, 7],
         [2, 5, 8],
         [0, 4, 8],
-        [2, 4, 6],
+        [2, 4, 6]
     ];
 
     return winPatterns.some(pattern => {
-        if (pattern.every(index => cells[index].textContent === player)) {
-            winningCombination = pattern;
+        const [a, b, c] = pattern;
+        return cells[a].textContent === player &&
+               cells[b].textContent === player &&
+               cells[c].textContent === player;
+    });
+}
+
+// Check for a draw
+function isDraw() {
+    return [...cells].every(cell => cell.textContent);
+}
+
+// Highlight winning cells
+function highlightWinningCells() {
+    const winPatterns = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6]
+    ];
+
+    winPatterns.some(pattern => {
+        const [a, b, c] = pattern;
+        if (cells[a].textContent === currentPlayer &&
+            cells[b].textContent === currentPlayer &&
+            cells[c].textContent === currentPlayer) {
+            cells[a].classList.add('win');
+            cells[b].classList.add('win');
+            cells[c].classList.add('win');
+            winningCombination = [a, b, c];
             return true;
         }
         return false;
-    });
-}
-
-// Check if the game is a draw
-function isDraw() {
-    return [...cells].every(cell => {
-        return cell.textContent === 'X' || cell.textContent === 'O';
-    });
-}
-
-// Highlight the winning cells
-function highlightWinningCells() {
-    winningCombination.forEach(index => {
-        cells[index].classList.add('win');
     });
 }
 
@@ -149,6 +170,10 @@ resetScoreButton.addEventListener('click', resetGame);
 showHistoryButton.addEventListener('click', showHistory);
 closeModalButton.addEventListener('click', closeModals);
 closeHistoryModalButton.addEventListener('click', closeModals);
+playAgainButton.addEventListener('click', () => {
+    initializeGame();
+    gameOverModal.style.display = 'none';
+});
 
 // Initialize game on load
 initializeGame();
