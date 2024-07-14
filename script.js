@@ -1,4 +1,3 @@
-// Select DOM elements
 const cells = document.querySelectorAll('.cell');
 const statusText = document.getElementById('statusText');
 const gameOverModal = document.getElementById('gameOverModal');
@@ -6,6 +5,8 @@ const gameOverMessage = document.getElementById('gameOverMessage');
 const historyModal = document.getElementById('historyModal');
 const historyList = document.getElementById('historyList');
 const settingsModal = document.getElementById('settingsModal');
+const replayModal = document.getElementById('replayModal');
+const replayLastGameButton = document.getElementById('replayLastGame');
 const playerXNameInput = document.getElementById('playerXName');
 const playerONameInput = document.getElementById('playerOName');
 const playerXColorInput = document.getElementById('playerXColor');
@@ -13,6 +14,7 @@ const playerOColorInput = document.getElementById('playerOColor');
 const themeSelect = document.getElementById('themeSelect');
 const soundEffectsCheckbox = document.getElementById('soundEffects');
 const highlightWinsCheckbox = document.getElementById('highlightWins');
+const animationSpeedInput = document.getElementById('animationSpeed');
 const startGameButton = document.getElementById('startGame');
 const resetScoreButton = document.getElementById('resetScore');
 const showHistoryButton = document.getElementById('showHistory');
@@ -23,6 +25,7 @@ const closeSettingsModalButton = document.getElementById('closeSettingsModal');
 const playAgainButton = document.getElementById('playAgain');
 const toggleThemeButton = document.getElementById('toggleTheme');
 const undoMoveButton = document.getElementById('undoMove');
+const replayButton = document.getElementById('replayGame');
 
 let currentPlayer = 'X';
 let playerXScore = 0;
@@ -30,7 +33,8 @@ let playerOScore = 0;
 let winningCombination = [];
 let history = [];
 let previousMoves = [];
-let audio = new Audio('win-sound.mp3');
+let lastGameState = [];
+let audio = new Audio('win-sound.mp3'); // Ensure this path is correct for your audio file
 
 // Initialize the game
 function initializeGame() {
@@ -41,6 +45,7 @@ function initializeGame() {
     });
     statusText.textContent = `Player ${getCurrentPlayerName()}'s turn`;
     previousMoves = [];
+    lastGameState = Array.from(cells).map(cell => cell.textContent);
 }
 
 // Handle cell click
@@ -189,6 +194,7 @@ function closeModals() {
     gameOverModal.style.display = 'none';
     historyModal.style.display = 'none';
     settingsModal.style.display = 'none';
+    replayModal.style.display = 'none';
 }
 
 // Undo the last move
@@ -199,6 +205,19 @@ function undoLastMove() {
         lastMove.style.color = '';
         switchPlayer();
         statusText.textContent = `Player ${getCurrentPlayerName()}'s turn`;
+    }
+}
+
+// Replay the last game
+function replayLastGame() {
+    if (lastGameState.length > 0) {
+        cells.forEach((cell, index) => {
+            cell.textContent = lastGameState[index];
+            cell.style.color = '';
+            cell.classList.remove('win');
+        });
+        initializeGame();
+        lastGameState = [];
     }
 }
 
@@ -218,6 +237,10 @@ toggleThemeButton.addEventListener('click', () => {
     document.body.dataset.theme = document.body.dataset.theme === 'default' ? 'dark' : 'default';
 });
 undoMoveButton.addEventListener('click', undoLastMove);
+replayButton.addEventListener('click', () => {
+    replayModal.style.display = 'flex';
+});
+replayLastGameButton.addEventListener('click', replayLastGame);
 
 // Initialize game on load
 initializeGame();
