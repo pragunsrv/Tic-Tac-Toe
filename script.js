@@ -1,246 +1,185 @@
-const cells = document.querySelectorAll('.cell');
-const statusText = document.getElementById('statusText');
-const gameOverModal = document.getElementById('gameOverModal');
-const gameOverMessage = document.getElementById('gameOverMessage');
-const historyModal = document.getElementById('historyModal');
-const historyList = document.getElementById('historyList');
-const settingsModal = document.getElementById('settingsModal');
-const replayModal = document.getElementById('replayModal');
-const replayLastGameButton = document.getElementById('replayLastGame');
-const playerXNameInput = document.getElementById('playerXName');
-const playerONameInput = document.getElementById('playerOName');
-const playerXColorInput = document.getElementById('playerXColor');
-const playerOColorInput = document.getElementById('playerOColor');
-const themeSelect = document.getElementById('themeSelect');
-const soundEffectsCheckbox = document.getElementById('soundEffects');
-const highlightWinsCheckbox = document.getElementById('highlightWins');
-const animationSpeedInput = document.getElementById('animationSpeed');
-const startGameButton = document.getElementById('startGame');
-const resetScoreButton = document.getElementById('resetScore');
-const showHistoryButton = document.getElementById('showHistory');
-const settingsToggleButton = document.getElementById('settingsToggle');
-const closeModalButton = document.getElementById('closeModal');
-const closeHistoryModalButton = document.getElementById('closeHistoryModal');
-const closeSettingsModalButton = document.getElementById('closeSettingsModal');
-const playAgainButton = document.getElementById('playAgain');
-const toggleThemeButton = document.getElementById('toggleTheme');
-const undoMoveButton = document.getElementById('undoMove');
-const replayButton = document.getElementById('replayGame');
+document.addEventListener('DOMContentLoaded', () => {
+    const board = document.getElementById('board');
+    const cells = document.querySelectorAll('.cell');
+    const statusText = document.getElementById('statusText');
+    const gameOverModal = document.getElementById('gameOverModal');
+    const gameOverMessage = document.getElementById('gameOverMessage');
+    const playAgainButton = document.getElementById('playAgain');
+    const historyModal = document.getElementById('historyModal');
+    const historyList = document.getElementById('historyList');
+    const showHistoryButton = document.getElementById('showHistory');
+    const closeHistoryModalButton = document.getElementById('closeHistoryModal');
+    const settingsModal = document.getElementById('settingsModal');
+    const settingsToggleButton = document.getElementById('settingsToggle');
+    const closeSettingsModalButton = document.getElementById('closeSettingsModal');
+    const applySettingsButton = document.getElementById('applySettings');
+    const replayModal = document.getElementById('replayModal');
+    const replayGameButton = document.getElementById('replayGame');
+    const closeReplayModalButton = document.getElementById('closeReplayModal');
+    const replayLastGameButton = document.getElementById('replayLastGame');
+    const undoMoveButton = document.getElementById('undoMove');
+    const startGameButton = document.getElementById('startGame');
+    const resetScoreButton = document.getElementById('resetScore');
+    const playerXNameInput = document.getElementById('playerXName');
+    const playerONameInput = document.getElementById('playerOName');
+    const playerXColorInput = document.getElementById('playerXColor');
+    const playerOColorInput = document.getElementById('playerOColor');
+    const playerXAvatarInput = document.getElementById('playerXAvatar');
+    const playerOAvatarInput = document.getElementById('playerOAvatar');
+    const themeSelect = document.getElementById('themeSelect');
+    const soundEffectsCheckbox = document.getElementById('soundEffects');
+    const highlightWinsCheckbox = document.getElementById('highlightWins');
+    const enableAnimationsCheckbox = document.getElementById('enableAnimations');
+    const animationSpeedRange = document.getElementById('animationSpeed');
 
-let currentPlayer = 'X';
-let playerXScore = 0;
-let playerOScore = 0;
-let winningCombination = [];
-let history = [];
-let previousMoves = [];
-let lastGameState = [];
-let audio = new Audio('win-sound.mp3'); // Ensure this path is correct for your audio file
+    let boardState = Array(9).fill(null);
+    let currentPlayer = 'X';
+    let history = [];
+    let moveHistory = [];
+    let isGameOver = false;
 
-// Initialize the game
-function initializeGame() {
-    cells.forEach(cell => {
-        cell.textContent = '';
-        cell.classList.remove('win');
-        cell.addEventListener('click', handleClick);
-    });
-    statusText.textContent = `Player ${getCurrentPlayerName()}'s turn`;
-    previousMoves = [];
-    lastGameState = Array.from(cells).map(cell => cell.textContent);
-}
-
-// Handle cell click
-function handleClick(event) {
-    const cell = event.target;
-    if (cell.textContent || checkWin('X') || checkWin('O')) return;
-
-    cell.textContent = currentPlayer;
-    cell.style.color = getCurrentPlayerColor();
-    previousMoves.push(cell);
-
-    if (checkWin(currentPlayer)) {
-        updateScore(currentPlayer);
-        highlightWinningCells();
-        showGameOverModal(`${getCurrentPlayerName()} Wins!`);
-        playSound();
-        history.push({ player: getCurrentPlayerName(), cell: `Cell ${cell.dataset.index}` });
-    } else if (isDraw()) {
-        showGameOverModal('It\'s a Draw!');
-    } else {
-        switchPlayer();
-    }
-}
-
-// Play sound effect
-function playSound() {
-    if (soundEffectsCheckbox.checked) {
-        audio.play();
-    }
-}
-
-// Get current player name
-function getCurrentPlayerName() {
-    return currentPlayer === 'X' ? playerXNameInput.value : playerONameInput.value;
-}
-
-// Get current player color
-function getCurrentPlayerColor() {
-    return currentPlayer === 'X' ? playerXColorInput.value : playerOColorInput.value;
-}
-
-// Switch player
-function switchPlayer() {
-    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-    statusText.textContent = `Player ${getCurrentPlayerName()}'s turn`;
-}
-
-// Check for a win
-function checkWin(player) {
-    const winPatterns = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6]
+    const winningCombinations = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+        [0, 4, 8], [2, 4, 6] // diagonals
     ];
 
-    return winPatterns.some(pattern => {
-        const [a, b, c] = pattern;
-        return cells[a].textContent === player &&
-               cells[b].textContent === player &&
-               cells[c].textContent === player;
-    });
-}
-
-// Check for a draw
-function isDraw() {
-    return [...cells].every(cell => cell.textContent);
-}
-
-// Highlight winning cells
-function highlightWinningCells() {
-    const winPatterns = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6]
-    ];
-
-    winPatterns.some(pattern => {
-        const [a, b, c] = pattern;
-        if (cells[a].textContent === currentPlayer &&
-            cells[b].textContent === currentPlayer &&
-            cells[c].textContent === currentPlayer) {
-            cells[a].classList.add('win');
-            cells[b].classList.add('win');
-            cells[c].classList.add('win');
-            winningCombination = [a, b, c];
-            return true;
+    function checkWinner() {
+        for (const [a, b, c] of winningCombinations) {
+            if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
+                return boardState[a];
+            }
         }
-        return false;
-    });
-}
-
-// Show game over modal
-function showGameOverModal(message) {
-    gameOverMessage.textContent = message;
-    gameOverModal.style.display = 'flex';
-}
-
-// Update the score
-function updateScore(winner) {
-    if (winner === 'X') {
-        playerXScore++;
-    } else {
-        playerOScore++;
+        return boardState.includes(null) ? null : 'Tie';
     }
-    updateScoreDisplay();
-}
 
-// Reset the game and scores
-function resetGame() {
-    initializeGame();
-    startGameButton.disabled = false;
-    playerXScore = 0;
-    playerOScore = 0;
-    updateScoreDisplay();
-}
-
-// Update the score display
-function updateScoreDisplay() {
-    document.getElementById('playerXScore').textContent = `Player X: ${playerXScore}`;
-    document.getElementById('playerOScore').textContent = `Player O: ${playerOScore}`;
-}
-
-// Show game history
-function showHistory() {
-    historyList.innerHTML = history.map(entry => `<li>${entry.player} - ${entry.cell}</li>`).join('');
-    historyModal.style.display = 'flex';
-}
-
-// Show settings modal
-function showSettings() {
-    settingsModal.style.display = 'flex';
-}
-
-// Close modals
-function closeModals() {
-    gameOverModal.style.display = 'none';
-    historyModal.style.display = 'none';
-    settingsModal.style.display = 'none';
-    replayModal.style.display = 'none';
-}
-
-// Undo the last move
-function undoLastMove() {
-    if (previousMoves.length > 0) {
-        const lastMove = previousMoves.pop();
-        lastMove.textContent = '';
-        lastMove.style.color = '';
-        switchPlayer();
-        statusText.textContent = `Player ${getCurrentPlayerName()}'s turn`;
+    function updateStatus() {
+        const winner = checkWinner();
+        if (winner) {
+            isGameOver = true;
+            if (winner === 'Tie') {
+                gameOverMessage.textContent = "It's a tie!";
+            } else {
+                gameOverMessage.textContent = `${currentPlayer} wins!`;
+                if (highlightWinsCheckbox.checked) {
+                    highlightWinningCells(winner);
+                }
+            }
+            gameOverModal.style.display = 'block';
+            if (soundEffectsCheckbox.checked) {
+                new Audio('win-sound.mp3').play();
+            }
+        } else {
+            statusText.textContent = `Player ${currentPlayer}'s turn`;
+        }
     }
-}
 
-// Replay the last game
-function replayLastGame() {
-    if (lastGameState.length > 0) {
-        cells.forEach((cell, index) => {
-            cell.textContent = lastGameState[index];
-            cell.style.color = '';
-            cell.classList.remove('win');
-        });
-        initializeGame();
-        lastGameState = [];
+    function highlightWinningCells(winner) {
+        for (const [a, b, c] of winningCombinations) {
+            if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
+                cells[a].classList.add('win');
+                cells[b].classList.add('win');
+                cells[c].classList.add('win');
+                break;
+            }
+        }
     }
-}
 
-// Event listeners
-startGameButton.addEventListener('click', initializeGame);
-resetScoreButton.addEventListener('click', resetGame);
-showHistoryButton.addEventListener('click', showHistory);
-settingsToggleButton.addEventListener('click', showSettings);
-closeModalButton.addEventListener('click', closeModals);
-closeHistoryModalButton.addEventListener('click', closeModals);
-closeSettingsModalButton.addEventListener('click', closeModals);
-playAgainButton.addEventListener('click', () => {
-    initializeGame();
-    gameOverModal.style.display = 'none';
-});
-toggleThemeButton.addEventListener('click', () => {
-    document.body.dataset.theme = document.body.dataset.theme === 'default' ? 'dark' : 'default';
-});
-undoMoveButton.addEventListener('click', undoLastMove);
-replayButton.addEventListener('click', () => {
-    replayModal.style.display = 'flex';
-});
-replayLastGameButton.addEventListener('click', replayLastGame);
+    function makeMove(index) {
+        if (isGameOver || boardState[index]) return;
 
-// Initialize game on load
-initializeGame();
+        boardState[index] = currentPlayer;
+        cells[index].textContent = currentPlayer;
+        moveHistory.push(index);
+        updateStatus();
+        if (currentPlayer === 'X') {
+            currentPlayer = 'O';
+        } else {
+            currentPlayer = 'X';
+        }
+    }
+
+    function handleCellClick(event) {
+        const index = event.target.dataset.index;
+        makeMove(index);
+    }
+
+    function startNewGame() {
+        boardState = Array(9).fill(null);
+        cells.forEach(cell => cell.textContent = '');
+        currentPlayer = 'X';
+        statusText.textContent = `Player ${currentPlayer}'s turn`;
+        isGameOver = false;
+        moveHistory = [];
+    }
+
+    function resetScore() {
+        history = [];
+        updateHistoryModal();
+    }
+
+    function showHistory() {
+        updateHistoryModal();
+        historyModal.style.display = 'block';
+    }
+
+    function updateHistoryModal() {
+        historyList.innerHTML = history.map(game => `<li>${game}</li>`).join('');
+    }
+
+    function closeHistoryModal() {
+        historyModal.style.display = 'none';
+    }
+
+    function openSettings() {
+        settingsModal.style.display = 'block';
+    }
+
+    function closeSettingsModal() {
+        settingsModal.style.display = 'none';
+    }
+
+    function applySettings() {
+        document.body.dataset.theme = themeSelect.value;
+        // Apply color and avatar settings here
+        closeSettingsModal();
+    }
+
+    function undoMove() {
+        const lastMove = moveHistory.pop();
+        if (lastMove !== undefined) {
+            boardState[lastMove] = null;
+            cells[lastMove].textContent = '';
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            updateStatus();
+        }
+    }
+
+    function replayLastGame() {
+        // Logic to replay the last game
+        replayModal.style.display = 'none';
+    }
+
+    function closeReplayModal() {
+        replayModal.style.display = 'none';
+    }
+
+    function playAgain() {
+        startNewGame();
+        gameOverModal.style.display = 'none';
+    }
+
+    cells.forEach(cell => cell.addEventListener('click', handleCellClick));
+    startGameButton.addEventListener('click', startNewGame);
+    resetScoreButton.addEventListener('click', resetScore);
+    showHistoryButton.addEventListener('click', showHistory);
+    closeHistoryModalButton.addEventListener('click', closeHistoryModal);
+    settingsToggleButton.addEventListener('click', openSettings);
+    closeSettingsModalButton.addEventListener('click', closeSettingsModal);
+    applySettingsButton.addEventListener('click', applySettings);
+    undoMoveButton.addEventListener('click', undoMove);
+    replayGameButton.addEventListener('click', () => replayModal.style.display = 'block');
+    replayLastGameButton.addEventListener('click', replayLastGame);
+    closeReplayModalButton.addEventListener('click', closeReplayModal);
+    playAgainButton.addEventListener('click', playAgain);
+});

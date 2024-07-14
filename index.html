@@ -3,20 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic-Tac-Toe</title>
+    <title>Tic-Tac-Toe - Version 15</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Tic-Tac-Toe</h1>
-        <div class="game-info">
-            <div id="statusText">Player X's turn</div>
-            <div class="scoreboard">
-                <div id="playerXScore">Player X: 0</div>
-                <div id="playerOScore">Player O: 0</div>
-            </div>
-        </div>
-        <div class="board">
+    <div id="gameContainer">
+        <div id="statusText">Player X's turn</div>
+        <div id="board">
             <div class="cell" data-index="0"></div>
             <div class="cell" data-index="1"></div>
             <div class="cell" data-index="2"></div>
@@ -27,72 +20,59 @@
             <div class="cell" data-index="7"></div>
             <div class="cell" data-index="8"></div>
         </div>
-        <div class="controls">
+        <div id="controls">
             <button id="startGame">Start New Game</button>
-            <button id="resetScore">Reset Scores</button>
+            <button id="resetScore">Reset Score</button>
             <button id="showHistory">Show History</button>
             <button id="settingsToggle">Settings</button>
-            <button id="toggleTheme">Toggle Dark/Light Theme</button>
-            <button id="undoMove">Undo Last Move</button>
-            <button id="replayGame">Replay Last Game</button>
+            <button id="undoMove">Undo Move</button>
+            <button id="replayGame">Replay Game</button>
         </div>
-    </div>
-
-    <!-- Game Over Modal -->
-    <div id="gameOverModal" class="modal">
-        <div class="modal-content">
-            <span id="closeModal" class="close">&times;</span>
-            <p id="gameOverMessage"></p>
+        <div id="gameOverModal" class="modal">
+            <div id="gameOverMessage"></div>
             <button id="playAgain">Play Again</button>
         </div>
-    </div>
-
-    <!-- History Modal -->
-    <div id="historyModal" class="modal">
-        <div class="modal-content">
-            <span id="closeHistoryModal" class="close">&times;</span>
+        <div id="historyModal" class="modal">
             <h2>Game History</h2>
             <ul id="historyList"></ul>
+            <button id="closeHistoryModal">Close</button>
         </div>
-    </div>
-
-    <!-- Settings Modal -->
-    <div id="settingsModal" class="modal">
-        <div class="modal-content">
-            <span id="closeSettingsModal" class="close">&times;</span>
+        <div id="settingsModal" class="modal">
             <h2>Settings</h2>
             <label for="playerXName">Player X Name:</label>
-            <input type="text" id="playerXName" value="X">
-            <label for="playerXColor">Player X Color:</label>
-            <input type="color" id="playerXColor" value="#000000">
+            <input type="text" id="playerXName" value="Player X">
             <label for="playerOName">Player O Name:</label>
-            <input type="text" id="playerOName" value="O">
+            <input type="text" id="playerOName" value="Player O">
+            <label for="playerXColor">Player X Color:</label>
+            <input type="color" id="playerXColor" value="#FF0000">
             <label for="playerOColor">Player O Color:</label>
-            <input type="color" id="playerOColor" value="#000000">
+            <input type="color" id="playerOColor" value="#0000FF">
+            <label for="playerXAvatar">Player X Avatar URL:</label>
+            <input type="text" id="playerXAvatar">
+            <label for="playerOAvatar">Player O Avatar URL:</label>
+            <input type="text" id="playerOAvatar">
             <label for="themeSelect">Theme:</label>
             <select id="themeSelect">
                 <option value="default">Default</option>
                 <option value="dark">Dark</option>
-                <option value="light">Light</option>
             </select>
             <label for="soundEffects">Sound Effects:</label>
-            <input type="checkbox" id="soundEffects">
+            <input type="checkbox" id="soundEffects" checked>
             <label for="highlightWins">Highlight Wins:</label>
-            <input type="checkbox" id="highlightWins">
+            <input type="checkbox" id="highlightWins" checked>
+            <label for="enableAnimations">Enable Animations:</label>
+            <input type="checkbox" id="enableAnimations" checked>
             <label for="animationSpeed">Animation Speed:</label>
-            <input type="range" id="animationSpeed" min="0.1" max="2" step="0.1" value="1">
+            <input type="range" id="animationSpeed" min="0.1" max="2" step="0.1" value="0.5">
+            <button id="closeSettingsModal">Close</button>
+            <button id="applySettings">Apply Settings</button>
         </div>
-    </div>
-
-    <!-- Replay Modal -->
-    <div id="replayModal" class="modal">
-        <div class="modal-content">
-            <span id="closeReplayModal" class="close">&times;</span>
+        <div id="replayModal" class="modal">
             <h2>Replay Last Game</h2>
             <button id="replayLastGame">Replay</button>
+            <button id="closeReplayModal">Close</button>
         </div>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
