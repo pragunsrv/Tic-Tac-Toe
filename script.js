@@ -11,6 +11,7 @@ const gameOverModal = document.getElementById('game-over-modal');
 const gameOverMessage = document.getElementById('game-over-message');
 const closeModal = document.getElementById('close-modal');
 const modalRestartButton = document.getElementById('modal-restart');
+
 let currentPlayer = 'X';
 let isGameActive = true;
 let playerXScore = 0;
@@ -18,14 +19,10 @@ let playerOScore = 0;
 let winningCombination = [];
 let history = [];
 
-const PLAYER_X_WON = 'PLAYER_X_WON';
-const PLAYER_O_WON = 'PLAYER_O_WON';
-const TIE = 'TIE';
-
+// Event listeners
 cells.forEach(cell => {
     cell.addEventListener('click', handleClick, { once: true });
 });
-
 restartButton.addEventListener('click', restartGame);
 resetScoreButton.addEventListener('click', resetScore);
 undoButton.addEventListener('click', undoMove);
@@ -35,11 +32,13 @@ modalRestartButton.addEventListener('click', () => {
     restartGame();
 });
 
+// Handle click on a cell
 function handleClick(e) {
     const cell = e.target;
     if (!isGameActive) return;
 
     cell.textContent = currentPlayer;
+    cell.removeEventListener('click', handleClick); // Prevent further clicks
     history.push({ cell, player: currentPlayer });
 
     if (checkWin(currentPlayer)) {
@@ -56,10 +55,12 @@ function handleClick(e) {
     }
 }
 
+// Get the current player's name from input field
 function getCurrentPlayerName() {
     return currentPlayer === 'X' ? playerXNameInput.value : playerONameInput.value;
 }
 
+// Check if the current player has won
 function checkWin(player) {
     const winPatterns = [
         [0, 1, 2],
@@ -81,48 +82,56 @@ function checkWin(player) {
     });
 }
 
+// Check if the game is a draw
 function isDraw() {
     return [...cells].every(cell => {
         return cell.textContent === 'X' || cell.textContent === 'O';
     });
 }
 
+// Restart the game
 function restartGame() {
     cells.forEach(cell => {
         cell.textContent = '';
         cell.classList.remove('win');
         cell.addEventListener('click', handleClick, { once: true });
     });
-    currentPlayer = 'X';
     statusText.textContent = `Player ${getCurrentPlayerName()}'s turn`;
     isGameActive = true;
+    winningCombination = [];
     history = [];
+    playerXNameInput.value = 'X';
+    playerONameInput.value = 'O';
 }
 
+// Reset the score
 function resetScore() {
     playerXScore = 0;
     playerOScore = 0;
     playerXScoreText.textContent = playerXScore;
     playerOScoreText.textContent = playerOScore;
-    restartGame();
 }
 
+// Undo the last move
 function undoMove() {
-    if (history.length > 0 && isGameActive) {
+    if (history.length > 0) {
         const lastMove = history.pop();
         lastMove.cell.textContent = '';
         lastMove.cell.addEventListener('click', handleClick, { once: true });
         currentPlayer = lastMove.player;
         statusText.textContent = `Player ${getCurrentPlayerName()}'s turn`;
+        isGameActive = true;
     }
 }
 
+// Highlight the winning cells
 function highlightWinningCells() {
     winningCombination.forEach(index => {
         cells[index].classList.add('win');
     });
 }
 
+// Update the score for the winner
 function updateScore(player) {
     if (player === 'X') {
         playerXScore++;
@@ -133,6 +142,7 @@ function updateScore(player) {
     }
 }
 
+// Show the game over modal with a message
 function showGameOverModal(message) {
     gameOverMessage.textContent = message;
     gameOverModal.style.display = 'block';
