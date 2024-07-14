@@ -22,12 +22,14 @@ const closeHistoryModalButton = document.getElementById('closeHistoryModal');
 const closeSettingsModalButton = document.getElementById('closeSettingsModal');
 const playAgainButton = document.getElementById('playAgain');
 const toggleThemeButton = document.getElementById('toggleTheme');
+const undoMoveButton = document.getElementById('undoMove');
 
 let currentPlayer = 'X';
 let playerXScore = 0;
 let playerOScore = 0;
 let winningCombination = [];
 let history = [];
+let previousMoves = [];
 let audio = new Audio('win-sound.mp3');
 
 // Initialize the game
@@ -38,6 +40,7 @@ function initializeGame() {
         cell.addEventListener('click', handleClick);
     });
     statusText.textContent = `Player ${getCurrentPlayerName()}'s turn`;
+    previousMoves = [];
 }
 
 // Handle cell click
@@ -47,6 +50,7 @@ function handleClick(event) {
 
     cell.textContent = currentPlayer;
     cell.style.color = getCurrentPlayerColor();
+    previousMoves.push(cell);
 
     if (checkWin(currentPlayer)) {
         updateScore(currentPlayer);
@@ -151,6 +155,7 @@ function updateScore(winner) {
     } else {
         playerOScore++;
     }
+    updateScoreDisplay();
 }
 
 // Reset the game and scores
@@ -186,6 +191,17 @@ function closeModals() {
     settingsModal.style.display = 'none';
 }
 
+// Undo the last move
+function undoLastMove() {
+    if (previousMoves.length > 0) {
+        const lastMove = previousMoves.pop();
+        lastMove.textContent = '';
+        lastMove.style.color = '';
+        switchPlayer();
+        statusText.textContent = `Player ${getCurrentPlayerName()}'s turn`;
+    }
+}
+
 // Event listeners
 startGameButton.addEventListener('click', initializeGame);
 resetScoreButton.addEventListener('click', resetGame);
@@ -201,6 +217,7 @@ playAgainButton.addEventListener('click', () => {
 toggleThemeButton.addEventListener('click', () => {
     document.body.dataset.theme = document.body.dataset.theme === 'default' ? 'dark' : 'default';
 });
+undoMoveButton.addEventListener('click', undoLastMove);
 
 // Initialize game on load
 initializeGame();

@@ -17,7 +17,7 @@ body {
     border-radius: 12px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     padding: 20px;
-    max-width: 500px;
+    max-width: 600px;
     width: 100%;
 }
 
@@ -128,7 +128,7 @@ button:disabled {
     padding: 20px;
     border-radius: 8px;
     position: relative;
-    width: 350px;
+    width: 400px;
 }
 
 .close {
